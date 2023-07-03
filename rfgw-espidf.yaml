@@ -1,0 +1,43 @@
+esphome:
+  name: "${name}"
+  friendly_name: "${NAME}"
+  libraries:
+     - rtl_433_ESP=https://github.com/mag1024/rtl_433_ESP.git#esp-idf
+     - RadioLib@6.1.0
+  includes:
+    - 433/rtl433-to-mqtt.h
+  platformio_options:
+    lib_ldf_mode: "chain+"
+    build_flags:
+      #- '-DLOG_LEVEL=LOG_VERBOSE'
+      - '-DONBOARD_LED=25'
+      #- '-DPUBLISH_UNPARSED=true'
+      #- '-DRAW_SIGNAL_DEBUG'
+      #- '-DRTL_VERBOSE=63'
+      - '-DMY_DEVICES'
+      #- '-DREGOOKFIX_DEBUG'
+      #- '-DRF_MODULE_INIT_STATUS'
+      - '-DRF_MODULE_CS=18'
+      - '-DRF_MODULE_SCK=5'
+      - '-DRF_MODULE_RST=23'
+      - '-DRF_MODULE_DIO0=26'
+      - '-DRF_MODULE_DIO1=33'
+      - '-DRF_MODULE_DIO2=32'
+      - '-DRF_SX1278'
+      - '-DRF_MODULE_FREQUENCY=433.92'
+
+esp32:
+  board: ttgo-lora32-v21
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_COMPILER_OPTIMIZATION_SIZE: y
+
+custom_component:
+  - id: rtl433
+    lambda: return { new Rtl433ToMqtt("${name}") };
+
+interval:
+  - interval: 60s
+    then:
+      - lambda: Rtl433ToMqtt::get(rtl433)->status();

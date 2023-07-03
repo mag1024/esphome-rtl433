@@ -57,6 +57,7 @@ void Rtl433ToMqtt::process(char* msg) {
 
 void Rtl433ToMqtt::process_json(JsonObject doc) {
   const char* model = doc["model"];
+  if (strcmp(model, "status") == 0) return;
   char topic[30];
   snprintf(topic, sizeof(topic), "433/%s/%d", model, doc["id"].as<int>());
   publish_json(topic, [this, doc](JsonObject root) {

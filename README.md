@@ -17,3 +17,4 @@ mqtt:
   ...
 ```
 
+Or, if you want to use ESP-IDF framework instead of Arduino ([strongly recommended](https://esphome.io/components/bluetooth_proxy.html) for Bluetooth) you can use `rfgw-espidf.yaml` instead.
