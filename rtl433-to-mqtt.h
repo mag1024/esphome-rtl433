@@ -8,7 +8,7 @@
 
 #include "rtl_433_ESP.h"
 
-class Rtl433ToMqtt : public Component, public CustomMQTTDevice {
+class Rtl433ToMqtt : public esphome::Component, public esphome::mqtt::CustomMQTTDevice {
  public:
   Rtl433ToMqtt(const char* source) : source_(source) {
     instance_ = this;
