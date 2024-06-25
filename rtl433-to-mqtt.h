@@ -52,6 +52,7 @@ void Rtl433ToMqtt::process(char* msg) {
   ESP_LOGD("custom", "Received msg: %s", msg);
   parse_json(msg, [this](JsonObject doc) {
     process_json(doc);
+    return true;
   });
 }
 
