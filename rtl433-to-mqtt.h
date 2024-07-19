@@ -20,6 +20,7 @@ class Rtl433ToMqtt : public esphome::Component, public esphome::mqtt::CustomMQTT
 
   void setup() override;
   void loop() override { rf_.loop(); }
+  void stop() { rf_.disableReceiver(); }
 
   void status() {
     rf_.getStatus();
@@ -60,7 +61,7 @@ void Rtl433ToMqtt::process_json(JsonObject doc) {
   const char* model = doc["model"];
   if (strcmp(model, "status") == 0) return;
   char topic[30];
-  snprintf(topic, sizeof(topic), "433/%s/%d", model, doc["id"].as<int>());
+  snprintf(topic, sizeof(topic), "rtl_433/%s/%d", model, doc["id"].as<int>());
   publish_json(topic, [this, doc](JsonObject root) {
     root.set(doc);
     root["source"] = source_;

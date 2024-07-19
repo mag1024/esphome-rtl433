@@ -1,9 +1,10 @@
 esphome:
   name: "${name}"
   friendly_name: "${NAME}"
+  comment: "LILYGO LoRa32 (ttgo-lora32-v21)"
   libraries:
-     - rtl_433_ESP=https://github.com/NorthernMan54/rtl_433_ESP.git#v0.3.0
-     - RadioLib@5.7.0
+    - rtl_433_ESP=https://github.com/NorthernMan54/rtl_433_ESP.git#v0.3.2
+    - RadioLib@6.1.0
   includes:
     - 433/rtl433-to-mqtt.h
   platformio_options:
@@ -14,6 +15,7 @@ esphome:
       #- '-DPUBLISH_UNPARSED=true'
       #- '-DRAW_SIGNAL_DEBUG'
       #- '-DRTL_VERBOSE=63'
+      #- '-DMY_DEVICES'
       #- '-DREGOOKFIX_DEBUG'
       #- '-DRF_MODULE_INIT_STATUS'
       - '-DRF_SX1278'
@@ -33,4 +35,8 @@ custom_component:
 interval:
   - interval: 60s
     then:
-      - lambda: Rtl433ToMqtt::get(rtl433)->status();
+      - lambda: Rtl433ToMqtt::get(id(rtl433))->status();
+
+ota:
+  on_begin:
+    - lambda: Rtl433ToMqtt::get(id(rtl433))->stop();
