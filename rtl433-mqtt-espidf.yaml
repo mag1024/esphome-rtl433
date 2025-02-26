@@ -1,23 +1,15 @@
 esphome:
-  name: "${name}"
-  friendly_name: "${NAME}"
+  name: "rtl433"
+  friendly_name: "RTL433 MQTT Gateway"
   comment: "LILYGO LoRa32 (ttgo-lora32-v21)"
   libraries:
     - rtl_433_ESP=https://github.com/mag1024/rtl_433_ESP.git#esp-idf
-    - RadioLib@6.1.0
-  includes:
-    - 433/rtl433-to-mqtt.h
+    - RadioLib@6.2.0
   platformio_options:
     lib_ldf_mode: "chain+"
     build_flags:
-      #- '-DLOG_LEVEL=LOG_VERBOSE'
       - '-DONBOARD_LED=25'
-      #- '-DPUBLISH_UNPARSED=true'
-      #- '-DRAW_SIGNAL_DEBUG'
-      #- '-DRTL_VERBOSE=63'
-      #- '-DMY_DEVICES'
-      #- '-DREGOOKFIX_DEBUG'
-      #- '-DRF_MODULE_INIT_STATUS'
+      - '-DMY_DEVICES'
       - '-DRF_MODULE_CS=18'
       - '-DRF_MODULE_SCK=5'
       - '-DRF_MODULE_RST=23'
@@ -26,6 +18,11 @@ esphome:
       - '-DRF_MODULE_DIO2=32'
       - '-DRF_SX1278'
       - '-DRF_MODULE_FREQUENCY=433.92'
+      # - '-DLOG_LEVEL=LOG_VERBOSE'
+      # - '-DPUBLISH_UNPARSED=true'
+      # - '-DRTL_VERBOSE=63'
+      # - '-DRTL_DEBUG=2'
+      # - '-DRAW_SIGNAL_DEBUG'
 
 esp32:
   board: ttgo-lora32-v21
@@ -34,15 +31,13 @@ esp32:
     sdkconfig_options:
       CONFIG_COMPILER_OPTIMIZATION_SIZE: y
 
-custom_component:
-  - id: rtl433
-    lambda: return { new Rtl433ToMqtt("${name}") };
+external_components:
+  - source: github://mag1024/esphome-rtl433
 
-interval:
-  - interval: 60s
-    then:
-      - lambda: Rtl433ToMqtt::get(id(rtl433))->status();
+rtl433_mqtt:
+  id: gateway
+  mqtt_id: my_mqtt
 
 ota:
   on_begin:
-    - lambda: Rtl433ToMqtt::get(id(rtl433))->stop();
+    - rtl433_mqtt.stop: gateway
