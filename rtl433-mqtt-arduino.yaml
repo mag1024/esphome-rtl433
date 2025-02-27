@@ -1,3 +1,5 @@
+# I use the espidf verison, so this may be somewhat out-of-date.
+
 esphome:
   name: "rtl433"
   friendly_name: "RTL433 MQTT Gateway"
